@@ -1,5 +1,6 @@
 import { getQuickJS } from 'quickjs-emscripten';
 import {promises as fs} from 'fs';
+import BotManager from './BotManager.js';
 
 async function main() {
     const QuickJS = await getQuickJS()
@@ -42,4 +43,7 @@ async function main() {
     vm.dispose()
 }
 
-main();
+//main();
+
+const botManager = new BotManager(8090);
+
