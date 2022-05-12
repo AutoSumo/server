@@ -6,6 +6,8 @@ export default class Bot {
 
         this.leftPower = 0;
         this.rightPower = 0;
+        this.leftIR = false;
+        this.rightIR = false;
         this.powerLastSent = 0;
 
         this.motorInterval = setInterval(() => {
@@ -19,6 +21,25 @@ export default class Bot {
             console.log('Bot disconnected!');
             clearInterval(this.motorInterval);
         });
+
+        ws.on('message', (data, isBinary) => {
+            if(isBinary) {
+                if(data.length < 1) return;
+                const packetID = data[0];
+
+                // IR packet
+                if(packetID === 2 && data.length >= 3) {
+                    this.leftIR = data[1] !== 0x00;
+                    this.rightIR = data[2] !== 0x00;
+                }
+            }
+        });
+    }
+
+    setPower(left, right) {
+        this.leftPower = left;
+        this.rightPower = right;
+        this.sendPower();
     }
 
     sendPower() {
