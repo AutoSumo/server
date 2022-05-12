@@ -1,4 +1,10 @@
 
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 export default class Bot {
     constructor(ws) {
         console.log('New bot connection!');
@@ -17,9 +23,15 @@ export default class Bot {
             }
         }, 500);
 
+        // Servo tests
+        this.servoInterval = setInterval(() => {
+            this.sendServo(getRandomInt(0, 180));
+        }, 1000);
+
         ws.on('close', () => {
             console.log('Bot disconnected!');
             clearInterval(this.motorInterval);
+            clearInterval(this.servoInterval);
         });
 
         ws.on('message', (data, isBinary) => {
@@ -57,6 +69,13 @@ export default class Bot {
         buffer.writeUInt8(rightPositive, 4);
         buffer.writeUInt16LE(right, 5);
 
+        this.ws.send(buffer);
+    }
+
+    sendServo(angle) {
+        const buffer = Buffer.alloc(2);
+        buffer.writeUInt8(0x03, 0);
+        buffer.writeUInt8(angle, 1);
         this.ws.send(buffer);
     }
 }
