@@ -23,15 +23,9 @@ export default class Bot {
             }
         }, 500);
 
-        // Servo tests
-        this.servoInterval = setInterval(() => {
-            this.sendServo(getRandomInt(0, 180));
-        }, 1000);
-
         ws.on('close', () => {
             console.log('Bot disconnected!');
             clearInterval(this.motorInterval);
-            clearInterval(this.servoInterval);
         });
 
         ws.on('message', (data, isBinary) => {
