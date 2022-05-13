@@ -14,6 +14,8 @@ export default class Bot {
         this.rightPower = 0;
         this.leftIR = false;
         this.rightIR = false;
+        this.lidar = 0;
+        this.lidarStatus = 0;
         this.powerLastSent = 0;
 
         this.motorInterval = setInterval(() => {
@@ -33,10 +35,14 @@ export default class Bot {
                 if(data.length < 1) return;
                 const packetID = data[0];
 
-                // IR packet
                 if(packetID === 2 && data.length >= 3) {
+                    // IR packet
                     this.leftIR = data[1] !== 0x00;
                     this.rightIR = data[2] !== 0x00;
+                } else if(packetID === 4 && data.length >= 3) {
+                    // Lidar packet
+                    this.lidar = data[1]
+                    this.lidarStatus = data[2];
                 }
             }
         });
