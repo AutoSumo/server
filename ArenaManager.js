@@ -10,6 +10,7 @@ export default class ArenaManager extends EventEmitter {
         this.ws = new WebSocket(`ws://localhost:7844`);
         this.ws.on('open', () => {
             console.log('Opened arena websocket!');
+            this.emit('connected');
         });
         this.ws.on('message', data => {
             const message = data.toString()
@@ -26,6 +27,9 @@ export default class ArenaManager extends EventEmitter {
                             this.emit('leave', tag.id);
                         }
                         existing.in = tag.in;
+                    }
+                    if(!tag.in) {
+                        this.emit('gone', tag.id);
                     }
                 }
             } catch(ignored) {}

@@ -94,6 +94,10 @@ export default class ActiveCode extends EventEmitter {
         this.latestRight = 0;
         if(this.target !== null) {
             this.target.setPower(0, 0);
+            this.target.sendServo(90);
         }
+
+        this.target = null;
+        this.botID = null;
     }
 }
