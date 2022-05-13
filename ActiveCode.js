@@ -1,6 +1,5 @@
-import { getQuickJS, Scope } from 'quickjs-emscripten';
+import {getQuickJS} from 'quickjs-emscripten';
 import {EventEmitter} from 'events';
-import {promises as fs} from "fs";
 
 export default class ActiveCode extends EventEmitter {
     constructor(text, botID, botManager) {
@@ -64,6 +63,24 @@ export default class ActiveCode extends EventEmitter {
                 this.target.sendServo(angle);
             }
         }).consume((handle) => vm.setProp(vm.global, 'moveServo', handle));
+
+        vm.newFunction('getLidar', () => {
+            return vm.newNumber(this.target.lidar);
+        }).consume((handle) => vm.setProp(vm.global, 'getLidar', handle));
+
+        vm.newFunction('getIR', (sideHandle) => {
+            const side = vm.getString(sideHandle);
+            if(side === 'left') {
+                return vm.newNumber(this.target.leftIR);
+            } else {
+                return vm.newNumber(this.target.rightIR);
+            }
+        }).consume((handle) => vm.setProp(vm.global, 'getIR', handle));
+
+        vm.newFunction('log', (textHandle) => {
+            const text = vm.getString(textHandle);
+            console.log(text);
+        }).consume((handle) => vm.setProp(vm.global, 'log', handle));
 
         vm.newFunction('waitSeconds', (secondsHandle) => {
             const seconds = vm.getNumber(secondsHandle);

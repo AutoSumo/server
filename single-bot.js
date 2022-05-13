@@ -65,6 +65,7 @@ console.log(`ID: "${fileID}"`);
 
     console.log('Ready! Press any key to execute');
     await keypress();
+    console.log('Running!');
 
     await Promise.any([
         keypress(),
