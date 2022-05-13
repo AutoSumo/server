@@ -1,13 +1,8 @@
+import { EventEmitter } from 'events';
 
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-export default class Bot {
+export default class Bot extends EventEmitter {
     constructor(ws) {
-        console.log('New bot connection!');
+        super();
         this.ws = ws;
 
         this.leftPower = 0;
@@ -17,6 +12,7 @@ export default class Bot {
         this.lidar = 0;
         this.lidarStatus = 0;
         this.powerLastSent = 0;
+        this.botID = null;
 
         this.motorInterval = setInterval(() => {
             const now = (new Date()).getTime();
@@ -28,6 +24,7 @@ export default class Bot {
         ws.on('close', () => {
             console.log('Bot disconnected!');
             clearInterval(this.motorInterval);
+            this.emit('disconnect');
         });
 
         ws.on('message', (data, isBinary) => {
@@ -43,6 +40,12 @@ export default class Bot {
                     // Lidar packet
                     this.lidar = data[1]
                     this.lidarStatus = data[2];
+                }
+            } else {
+                if(this.botID === null) {
+                    this.botID = data;
+                    console.log(`Bot "${this.botID}" connected`);
+                    this.emit('connect');
                 }
             }
         });
