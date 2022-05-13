@@ -16,10 +16,10 @@ export default class Bot extends EventEmitter {
 
         this.motorInterval = setInterval(() => {
             const now = (new Date()).getTime();
-            if(now - this.powerLastSent > 500) {
+            if(now - this.powerLastSent > 200) {
                 this.sendPower();
             }
-        }, 500);
+        }, 200);
 
         ws.on('close', () => {
             console.log('Bot disconnected!');
@@ -43,7 +43,7 @@ export default class Bot extends EventEmitter {
                 }
             } else {
                 if(this.botID === null) {
-                    this.botID = data;
+                    this.botID = data.toString();
                     console.log(`Bot "${this.botID}" connected`);
                     this.emit('connect');
                 }
@@ -51,9 +51,19 @@ export default class Bot extends EventEmitter {
         });
     }
 
+    rescalePower(power) {
+        if(power > 100) {
+            power = 100;
+        } else if(power < -100) {
+            power = -100;
+        }
+
+        return Math.round((power / 100) * 128);
+    }
+
     setPower(left, right) {
-        this.leftPower = left;
-        this.rightPower = right;
+        this.leftPower = this.rescalePower(left);
+        this.rightPower = this.rescalePower(right);
         this.sendPower();
     }
 
@@ -61,9 +71,9 @@ export default class Bot extends EventEmitter {
         this.powerLastSent = (new Date()).getTime();
 
         const leftPositive = (this.leftPower > 0) ? 0x01 : 0x00;
-        const left = Math.abs(Math.round((this.leftPower / 100) * 128));
+        const left = Math.abs(this.leftPower);
         const rightPositive = (this.rightPower > 0) ? 0x01 : 0x00;
-        const right = Math.abs(Math.round((this.rightPower / 100) * 128));
+        const right = Math.abs(this.rightPower);
 
         const buffer = Buffer.alloc(7);
         buffer.writeUInt8(0x01, 0);
@@ -76,6 +86,9 @@ export default class Bot extends EventEmitter {
     }
 
     sendServo(angle) {
+        if(angle < 0) angle = 0;
+        if(angle > 180) angle = 180;
+
         const buffer = Buffer.alloc(2);
         buffer.writeUInt8(0x03, 0);
         buffer.writeUInt8(angle, 1);
