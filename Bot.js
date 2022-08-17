@@ -34,6 +34,8 @@ export default class Bot extends EventEmitter {
 
                 if(packetID === 2 && data.length >= 3) {
                     // IR packet
+                    //console.log('IR Data:');
+                    //console.log(data);
                     this.leftIR = data[1] !== 0x00;
                     this.rightIR = data[2] !== 0x00;
                 } else if(packetID === 4 && data.length >= 3) {
@@ -44,7 +46,7 @@ export default class Bot extends EventEmitter {
             } else {
                 if(this.botID === null) {
                     this.botID = data.toString();
-                    console.log(`Bot "${this.botID}" connected`);
+                    console.log(`🤖 Bot "${this.botID}" connected`);
                     this.emit('connect');
                 }
             }

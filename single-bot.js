@@ -18,7 +18,7 @@ async function waitForBotConnection(botManager) {
 async function waitForArenaLeave(arena) {
     return new Promise((resolve, reject) => {
         arena.once('gone', id => {
-            console.log(`${id} has left the arena!`);
+            console.log(`🎉 ${id} has left the arena!`);
             resolve();
         });
     });
@@ -53,7 +53,7 @@ console.log(`ID: "${fileID}"`);
     console.groupEnd();
     console.log('');
 
-    console.log('Waiting for bot and arena connection...');
+    console.log('⌛ Waiting for bot and arena connection...');
     const botManager = new BotManager(8090);
     const arena = new ArenaManager();
 
@@ -63,9 +63,9 @@ console.log(`ID: "${fileID}"`);
     ]);
     const activeCode = new ActiveCode(code, botManager.bots[0].botID, botManager);
 
-    console.log('Ready! Press any key to execute');
+    console.log('👌 Ready! Press any key to execute');
     await keypress();
-    console.log('Running!');
+    console.log('➡️ Running!');
 
     await Promise.any([
         keypress(),
