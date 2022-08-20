@@ -2,11 +2,12 @@ import {getQuickJS} from 'quickjs-emscripten';
 import {EventEmitter} from 'events';
 
 export default class ActiveCode extends EventEmitter {
-    constructor(text, botID, botManager) {
+    constructor(text, botID, botManager, highlightManager) {
         super();
         this.text = text;
         this.botID = botID;
         this.botManager = botManager;
+        this.highlightManager = highlightManager;
         this.running = false;
 
         this.latestLeft = null;
@@ -81,6 +82,11 @@ export default class ActiveCode extends EventEmitter {
             const text = vm.getString(textHandle);
             console.log(text);
         }).consume((handle) => vm.setProp(vm.global, 'log', handle));
+
+        vm.newFunction('highlightBlock', (textHandle) => {
+            const text = vm.getString(textHandle);
+            this.highlightManager.highlight(text);
+        }).consume((handle) => vm.setProp(vm.global, 'highlightBlock', handle));
 
         vm.newFunction('waitSeconds', (secondsHandle) => {
             const seconds = vm.getNumber(secondsHandle);

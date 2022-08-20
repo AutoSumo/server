@@ -2,6 +2,8 @@ import BotManager from './BotManager.js';
 import ActiveCode from './ActiveCode.js';
 import ArenaManager from './ArenaManager.js';
 import fetch from 'node-fetch';
+import HighlightManager from './HighlightManager.js';
+import 'dotenv/config';
 
 async function waitForArenaConnection(arena) {
     return new Promise((resolve, reject) => {
@@ -56,12 +58,14 @@ console.log(`ID: "${fileID}"`);
     console.log('⌛ Waiting for bot and arena connection...');
     const botManager = new BotManager(8090);
     const arena = new ArenaManager();
+    const highlightManager = new HighlightManager();
 
     await Promise.all([
         waitForArenaConnection(arena),
-        waitForBotConnection(botManager)
+        waitForBotConnection(botManager),
+        highlightManager.waitForReady(process.env['ROBOT_SERVER_ID'])
     ]);
-    const activeCode = new ActiveCode(code, botManager.bots[0].botID, botManager);
+    const activeCode = new ActiveCode(code, botManager.bots[0].botID, botManager, highlightManager);
 
     console.log('👌 Ready! Press any key to execute');
     await keypress();

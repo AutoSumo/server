@@ -11,8 +11,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^16.0.1",
     "node-fetch": "^3.2.4",
     "quickjs-emscripten": "^0.20.0",
+    "throttle-debounce": "^5.0.0",
     "ws": "^8.6.0"
   }
 }
