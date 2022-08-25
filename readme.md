@@ -5,7 +5,7 @@ Core service that connects to other services and runs the robot code.
 ```mermaid
 flowchart TD
     web["🌐 Web Interface"] -->|uploads code| code-server[("💾 Code Server")]
-    code-server -->|hightlight data| web
+    code-server -->|highlight data| web
     code-server -->|downloads code| bot-server["💻 Bot Server\n(this)"]
     bot-server -->|highlight data| code-server
     bot-server -->|motor instructions| robot["🤖 Robot"]
